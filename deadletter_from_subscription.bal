@@ -59,7 +59,8 @@ public function main() {
 
     if (senderConnection is asb:SenderConnection) {
         log:print("Sending via Asb sender connection.");
-        checkpanic senderConnection->sendBatchMessage(stringArrayContent, parameters3, properties, maxMessageCount);
+        checkpanic senderConnection->sendMessageWithConfigurableParameters(byteContent, parameters1, properties);
+        checkpanic senderConnection->sendMessageWithConfigurableParameters(byteContentFromJson, parameters2, properties);
     } else {
         log:printError("Asb sender connection creation failed.");
     }
