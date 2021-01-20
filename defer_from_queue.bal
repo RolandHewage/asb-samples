@@ -35,10 +35,10 @@ public function main() {
     };
 
     log:print("Creating Asb sender connection.");
-    asb:SenderConnection? senderConnection = new (config);
+    asb:SenderConnection? senderConnection = checkpanic new (config);
 
     log:print("Creating Asb receiver connection.");
-    asb:ReceiverConnection? receiverConnection = new (config);
+    asb:ReceiverConnection? receiverConnection = checkpanic new (config);
 
     if (senderConnection is asb:SenderConnection) {
         log:print("Sending via Asb sender connection.");
@@ -53,7 +53,7 @@ public function main() {
         var sequenceNumber = receiverConnection->deferMessage();
         log:print("Done Deferring a message using its lock token.");
         log:print("Receiving from Asb receiver connection.");
-        asb:Message|asb:Error jsonMessageReceived = receiverConnection->receiveMessage(serverWaitTime);
+        asb:Message|asb:Error? jsonMessageReceived = receiverConnection->receiveMessage(serverWaitTime);
         if (jsonMessageReceived is asb:Message) {
             json jsonMessageRead = checkpanic jsonMessageReceived.getJSONContent();
             log:print("Reading Received Message : " + jsonMessageRead.toString());
@@ -65,10 +65,12 @@ public function main() {
             if(sequenceNumber == 0) {
                 log:printError("No message in the queue");
             }
-            asb:Message|asb:Error messageReceived = receiverConnection->receiveDeferredMessage(sequenceNumber);
+            asb:Message|asb:Error? messageReceived = receiverConnection->receiveDeferredMessage(sequenceNumber);
             if (messageReceived is asb:Message) {
                 string messageRead = checkpanic messageReceived.getTextContent();
                 log:print("Reading Received Message : " + messageRead);
+            } else if (messageReceived is ()) {
+                log:printError("No deferred message received with given sequence number");
             } else {
                 log:printError(msg = messageReceived.message());
             }
