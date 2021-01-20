@@ -50,12 +50,12 @@ public function main() {
     };
 
     log:print("Creating Asb sender connection.");
-    asb:SenderConnection? senderConnection = new (senderConfig);
+    asb:SenderConnection? senderConnection = checkpanic new (senderConfig);
 
     log:print("Creating Asb receiver connection.");
-    asb:ReceiverConnection? receiverConnection1 = new (receiverConfig1);
-    asb:ReceiverConnection? receiverConnection2 = new (receiverConfig2);
-    asb:ReceiverConnection? receiverConnection3 = new (receiverConfig3);
+    asb:ReceiverConnection? receiverConnection1 = checkpanic new (receiverConfig1);
+    asb:ReceiverConnection? receiverConnection2 = checkpanic new (receiverConfig2);
+    asb:ReceiverConnection? receiverConnection3 = checkpanic new (receiverConfig3);
 
     if (senderConnection is asb:SenderConnection) {
         log:print("Sending via Asb sender connection.");
@@ -70,7 +70,7 @@ public function main() {
         var sequenceNumber = receiverConnection1->deferMessage();
         log:print("Done Deferring a message using its lock token.");
         log:print("Receiving from Asb receiver connection.");
-        asb:Message|asb:Error jsonMessageReceived = receiverConnection1->receiveMessage(serverWaitTime);
+        asb:Message|asb:Error? jsonMessageReceived = receiverConnection1->receiveMessage(serverWaitTime);
         if (jsonMessageReceived is asb:Message) {
             json jsonMessageRead = checkpanic jsonMessageReceived.getJSONContent();
             log:print("Reading Received Message : " + jsonMessageRead.toString());
@@ -82,10 +82,12 @@ public function main() {
             if(sequenceNumber == 0) {
                 log:printError("No message in the queue");
             }
-            asb:Message|asb:Error messageReceived = receiverConnection1->receiveDeferredMessage(sequenceNumber);
+            asb:Message|asb:Error? messageReceived = receiverConnection1->receiveDeferredMessage(sequenceNumber);
             if (messageReceived is asb:Message) {
                 string messageRead = checkpanic messageReceived.getTextContent();
                 log:print("Reading Received Message : " + messageRead);
+            } else if (messageReceived is ()) {
+                log:printError("No deferred message received with given sequence number");
             } else {
                 log:printError(msg = messageReceived.message());
             }
@@ -101,7 +103,7 @@ public function main() {
         var sequenceNumber = receiverConnection2->deferMessage();
         log:print("Done Deferring a message using its lock token.");
         log:print("Receiving from Asb receiver connection.");
-        asb:Message|asb:Error jsonMessageReceived = receiverConnection2->receiveMessage(serverWaitTime);
+        asb:Message|asb:Error? jsonMessageReceived = receiverConnection2->receiveMessage(serverWaitTime);
         if (jsonMessageReceived is asb:Message) {
             json jsonMessageRead = checkpanic jsonMessageReceived.getJSONContent();
             log:print("Reading Received Message : " + jsonMessageRead.toString());
@@ -113,10 +115,12 @@ public function main() {
             if(sequenceNumber == 0) {
                 log:printError("No message in the queue");
             }
-            asb:Message|asb:Error messageReceived = receiverConnection2->receiveDeferredMessage(sequenceNumber);
+            asb:Message|asb:Error? messageReceived = receiverConnection2->receiveDeferredMessage(sequenceNumber);
             if (messageReceived is asb:Message) {
                 string messageRead = checkpanic messageReceived.getTextContent();
                 log:print("Reading Received Message : " + messageRead);
+            } else if (messageReceived is ()) {
+                log:printError("No deferred message received with given sequence number");
             } else {
                 log:printError(msg = messageReceived.message());
             }
@@ -132,7 +136,7 @@ public function main() {
         var sequenceNumber = receiverConnection3->deferMessage();
         log:print("Done Deferring a message using its lock token.");
         log:print("Receiving from Asb receiver connection.");
-        asb:Message|asb:Error jsonMessageReceived = receiverConnection3->receiveMessage(serverWaitTime);
+        asb:Message|asb:Error? jsonMessageReceived = receiverConnection3->receiveMessage(serverWaitTime);
         if (jsonMessageReceived is asb:Message) {
             json jsonMessageRead = checkpanic jsonMessageReceived.getJSONContent();
             log:print("Reading Received Message : " + jsonMessageRead.toString());
@@ -144,10 +148,12 @@ public function main() {
             if(sequenceNumber == 0) {
                 log:printError("No message in the queue");
             }
-            asb:Message|asb:Error messageReceived = receiverConnection3->receiveDeferredMessage(sequenceNumber);
+            asb:Message|asb:Error? messageReceived = receiverConnection3->receiveDeferredMessage(sequenceNumber);
             if (messageReceived is asb:Message) {
                 string messageRead = checkpanic messageReceived.getTextContent();
                 log:print("Reading Received Message : " + messageRead);
+            } else if (messageReceived is ()) {
+                log:printError("No deferred message received with given sequence number");
             } else {
                 log:printError(msg = messageReceived.message());
             }
