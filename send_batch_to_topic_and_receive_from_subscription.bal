@@ -50,12 +50,12 @@ public function main() {
     };
 
     log:print("Creating Asb sender connection.");
-    asb:SenderConnection? senderConnection = new (senderConfig);
+    asb:SenderConnection? senderConnection = checkpanic new (senderConfig);
 
     log:print("Creating Asb receiver connection.");
-    asb:ReceiverConnection? receiverConnection1 = new (receiverConfig1);
-    asb:ReceiverConnection? receiverConnection2 = new (receiverConfig2);
-    asb:ReceiverConnection? receiverConnection3 = new (receiverConfig3);
+    asb:ReceiverConnection? receiverConnection1 = checkpanic new (receiverConfig1);
+    asb:ReceiverConnection? receiverConnection2 = checkpanic new (receiverConfig2);
+    asb:ReceiverConnection? receiverConnection3 = checkpanic new (receiverConfig3);
 
     if (senderConnection is asb:SenderConnection) {
         log:print("Sending via Asb sender connection.");
