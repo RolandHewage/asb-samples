@@ -50,8 +50,8 @@ public function main() {
 
     if (receiverConnection is asb:ReceiverConnection) {
         log:print("Receiving from Asb receiver connection.");
-        asb:Message|asb:Error messageReceived = receiverConnection->receiveMessage(serverWaitTime);
-        asb:Message|asb:Error jsonMessageReceived = receiverConnection->receiveMessage(serverWaitTime);
+        asb:Message|asb:Error? messageReceived = receiverConnection->receiveMessage(serverWaitTime);
+        asb:Message|asb:Error? jsonMessageReceived = receiverConnection->receiveMessage(serverWaitTime);
         if (messageReceived is asb:Message && jsonMessageReceived is asb:Message) {
             string messageRead = checkpanic messageReceived.getTextContent();
             log:print("Reading Received Message : " + messageRead);
