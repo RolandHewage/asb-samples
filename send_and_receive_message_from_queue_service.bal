@@ -26,10 +26,10 @@ service /asb on new http:Listener(9090) {
         };
 
         log:print("Creating Asb sender connection.");
-        asb:SenderConnection? senderConnection = new (config);
+        asb:SenderConnection? senderConnection = checkpanic new (config);
 
         log:print("Creating Asb receiver connection.");
-        asb:ReceiverConnection? receiverConnection = new (config);
+        asb:ReceiverConnection? receiverConnection = checkpanic new (config);
 
         if (senderConnection is asb:SenderConnection) {
             log:print("Sending via Asb sender connection.");
@@ -39,8 +39,8 @@ service /asb on new http:Listener(9090) {
 
         if (receiverConnection is asb:ReceiverConnection) {
             log:print("Receiving from Asb receiver connection.");
-            asb:Message|asb:Error messageReceived = receiverConnection->receiveMessage(serverWaitTime);
-            asb:Message|asb:Error jsonMessageReceived = receiverConnection->receiveMessage(serverWaitTime);
+            asb:Message|asb:Error? messageReceived = receiverConnection->receiveMessage(serverWaitTime);
+            asb:Message|asb:Error? jsonMessageReceived = receiverConnection->receiveMessage(serverWaitTime);
             if (messageReceived is asb:Message && jsonMessageReceived is asb:Message) {
                 string messageRead = checkpanic messageReceived.getTextContent();
                 log:print("Reading Received Message : " + messageRead);
