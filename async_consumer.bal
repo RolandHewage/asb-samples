@@ -64,7 +64,7 @@ public function main() {
         }
     };
 
-    asb:Listener? channelListener = new(config);
+    asb:Listener? channelListener = new();
     if (channelListener is asb:Listener) {
         checkpanic channelListener.attach(asyncTestService);
         checkpanic channelListener.'start();
